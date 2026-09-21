@@ -6,33 +6,47 @@
 <style>
 :root{font-family:Inter,ui-sans-serif,system-ui,-apple-system,sans-serif;color:#f5f5f5;background:#090909}
 *{box-sizing:border-box}body{margin:0;background:radial-gradient(circle at 80% 0%,#222 0,#090909 38%);min-height:100vh}
-main{max-width:1400px;margin:auto;padding:32px}.top{display:flex;justify-content:space-between;align-items:center;margin-bottom:28px}
-.brand{font-size:25px;font-weight:800;letter-spacing:-.04em}.muted{color:#8f8f8f}.pill{border:1px solid #333;border-radius:999px;padding:7px 11px;font-size:12px}
+main{max-width:1400px;margin:auto;padding:32px}.top{display:flex;justify-content:space-between;align-items:center;margin-bottom:28px;gap:20px}
+.brand{font-size:25px;font-weight:800;letter-spacing:-.04em}.muted{color:#8f8f8f}.pill{border:1px solid #333;border-radius:999px;padding:7px 11px;font-size:12px;white-space:nowrap}
+.controls{display:flex;gap:8px;margin-bottom:14px}.controls input{flex:1;max-width:420px;background:#0d0d0d;color:#fff;border:1px solid #333;border-radius:10px;padding:11px 12px}.controls button,.ask button{background:#fff;color:#000;border:0;border-radius:10px;padding:0 16px;font-weight:700}
 .grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}.card{background:#111;border:1px solid #262626;border-radius:18px;padding:20px;box-shadow:0 15px 40px #0006}.label{font-size:12px;color:#8f8f8f;text-transform:uppercase;letter-spacing:.08em}.value{font-size:34px;font-weight:800;margin:10px 0 4px}.delta{font-size:13px;color:#bdbdbd}
-.panel{margin-top:14px;display:grid;grid-template-columns:1.7fr 1fr;gap:14px}.chart{height:270px;display:flex;align-items:end;gap:8px;padding-top:25px}.bar{flex:1;background:#e8e8e8;border-radius:7px 7px 2px 2px;min-height:12px}.posts{display:grid;gap:10px;margin-top:15px}.post{display:flex;justify-content:space-between;gap:15px;padding:13px;border:1px solid #242424;border-radius:12px}.post b{font-size:14px}.post span{font-size:12px;color:#8f8f8f}.insight{line-height:1.6;color:#d5d5d5}.ask{display:flex;gap:8px;margin-top:18px}.ask input{flex:1;background:#0a0a0a;color:#fff;border:1px solid #333;border-radius:10px;padding:12px}.ask button{background:#fff;color:#000;border:0;border-radius:10px;padding:0 16px;font-weight:700}.footer{margin-top:18px;color:#666;font-size:12px}
-@media(max-width:900px){.grid{grid-template-columns:repeat(2,1fr)}.panel{grid-template-columns:1fr}}@media(max-width:560px){main{padding:18px}.grid{grid-template-columns:1fr}.value{font-size:29px}}
+.panel{margin-top:14px;display:grid;grid-template-columns:1.7fr 1fr;gap:14px}.chart{height:270px;display:flex;align-items:end;gap:8px;padding-top:25px}.bar{flex:1;background:#e8e8e8;border-radius:7px 7px 2px 2px;min-height:12px}.posts{display:grid;gap:10px;margin-top:15px}.post{display:flex;justify-content:space-between;gap:15px;padding:13px;border:1px solid #242424;border-radius:12px}.post b{font-size:14px}.post span{font-size:12px;color:#8f8f8f}.insight{line-height:1.6;color:#d5d5d5}.ask{display:flex;gap:8px;margin-top:18px}.ask input{flex:1;background:#0a0a0a;color:#fff;border:1px solid #333;border-radius:10px;padding:12px}.footer{margin-top:18px;color:#666;font-size:12px}
+@media(max-width:900px){.grid{grid-template-columns:repeat(2,1fr)}.panel{grid-template-columns:1fr}}@media(max-width:560px){main{padding:18px}.grid{grid-template-columns:1fr}.value{font-size:29px}.top{align-items:flex-start;flex-direction:column}}
 </style></head>
 <body><main>
-<div class="top"><div><div class="brand">SUBSTACK OS</div><div class="muted">Publication intelligence command centre</div></div><div class="pill">MCP READY · READ ONLY</div></div>
+<div class="top"><div><div class="brand">SUBSTACK OS</div><div class="muted">Publication intelligence command centre</div></div><div class="pill" id="status">MCP READY · FIXTURE</div></div>
+<div class="controls"><input id="publication" placeholder="Publication name"><button onclick="loadPublication()">Load live data</button></div>
 <section class="grid">
-<div class="card"><div class="label">Subscribers</div><div class="value" id="subs">12,482</div><div class="delta">+8.7% · 30 days</div></div>
-<div class="card"><div class="label">Paid</div><div class="value" id="paid">1,284</div><div class="delta">10.3% conversion</div></div>
-<div class="card"><div class="label">Revenue</div><div class="value">$8,421</div><div class="delta">+12.4% · 30 days</div></div>
-<div class="card"><div class="label">Views</div><div class="value">184K</div><div class="delta">+19.1% · 30 days</div></div>
+<div class="card"><div class="label">Subscribers</div><div class="value" id="subs">12,482</div><div class="delta" id="subsDelta">+8.7% · 30 days</div></div>
+<div class="card"><div class="label">Paid</div><div class="value" id="paid">1,284</div><div class="delta" id="paidDelta">10.3% conversion</div></div>
+<div class="card"><div class="label">Revenue</div><div class="value" id="revenue">$8,421</div><div class="delta" id="revenueDelta">+12.4% · latest period</div></div>
+<div class="card"><div class="label">Views</div><div class="value" id="views">184K</div><div class="delta" id="viewsDelta">+19.1% · latest period</div></div>
 </section>
 <section class="panel">
-<div class="card"><div class="label">Subscriber growth · 30 days</div><div class="chart" id="chart"></div></div>
-<div class="card"><div class="label">AI intelligence</div><p class="insight">Your strongest recent pattern is the intersection of AI and money. High-view posts aren't automatically the highest converters, so the next layer should compare traffic source, paid conversion and revenue per post.</p><div class="ask"><input id="q" placeholder="Ask your publication…"><button onclick="ask()">Ask</button></div><p id="answer" class="muted"></p></div>
+<div class="card"><div class="label">Subscriber growth</div><div class="chart" id="chart"></div></div>
+<div class="card"><div class="label">AI intelligence</div><p class="insight" id="insight">Load a publication to replace the fixture with backend data. The analysis layer compares subscribers, paid conversion, revenue, views and post performance.</p><div class="ask"><input id="q" placeholder="Ask your publication…"><button onclick="ask()">Ask</button></div><p id="answer" class="muted"></p></div>
 </section>
-<section class="card" style="margin-top:14px"><div class="label">Top posts</div><div class="posts">
-<div class="post"><div><b>The AI Revolution Nobody Is Pricing In</b><br><span>Published 3 days ago</span></div><span>48,293 views</span></div>
-<div class="post"><div><b>Money Is Changing Faster Than You Think</b><br><span>Published 8 days ago</span></div><span>31,882 views</span></div>
-<div class="post"><div><b>The Death of the Old Internet</b><br><span>Published 12 days ago</span></div><span>27,421 views</span></div>
-</div></section>
-<div class="footer">Substack OS · designed for Substack MCP + Supabase + ChatGPT/Claude workflows</div>
+<section class="card" style="margin-top:14px"><div class="label">Top posts</div><div class="posts" id="posts"></div></section>
+<div class="footer">Substack OS · MCP ingest → Supabase → Netlify read API</div>
 </main>
 <script>
-const values=[32,38,35,45,49,44,57,61,58,69,73,71,78,82,76,88,91,86,95,100,97,108,111,118,116,124,131,127,139,146];
-document.getElementById('chart').innerHTML=values.map(v=>'<div class="bar" style="height:'+v*1.55+'px"></div>').join('');
-function ask(){const q=document.getElementById('q').value.trim();document.getElementById('answer').textContent=q?'MCP query queued: “'+q+'” · connect the Substack MCP to replace this demo response with live publication analysis.':'Ask something like “why did revenue change this month?”';}
+const fixture={summary:{subscribers:12482,paidSubscribers:1284,revenue:8421,views:184000,paidConversion:10.3,subscriberChangePct:8.7,revenueChangePct:12.4,viewsChangePct:19.1},topPosts:[{title:"The AI Revolution Nobody Is Pricing In",views:48293},{title:"Money Is Changing Faster Than You Think",views:31882},{title:"The Death of the Old Internet",views:27421}],insights:{topPost:"The AI Revolution Nobody Is Pricing In"}};
+function fmt(n){return new Intl.NumberFormat().format(Math.round(n||0))}
+function pct(n){return n==null?"n/a":(n>=0?"+":"")+n.toFixed(1)+"%"}
+function money(n){return new Intl.NumberFormat("en-US",{style:"currency",currency:"USD",maximumFractionDigits:0}).format(n||0)}
+function render(data,live=false){
+ const s=data.summary||{}; document.getElementById("subs").textContent=fmt(s.subscribers);document.getElementById("paid").textContent=fmt(s.paidSubscribers);document.getElementById("revenue").textContent=money(s.revenue);document.getElementById("views").textContent=s.views>=1000?(s.views/1000).toFixed(0)+"K":fmt(s.views);
+ document.getElementById("subsDelta").textContent=pct(s.subscriberChangePct)+" · latest vs previous";
+ document.getElementById("paidDelta").textContent=(s.paidConversion||0).toFixed(1)+"% conversion";
+ document.getElementById("revenueDelta").textContent=pct(s.revenueChangePct)+" · latest vs previous";
+ document.getElementById("viewsDelta").textContent=pct(s.viewsChangePct)+" · latest vs previous";
+ document.getElementById("insight").textContent=data.insights?.topPost?("Top post: "+data.insights.topPost+". Average ranked post views: "+fmt(data.insights.averagePostViews)+". Revenue per view: "+Number(data.insights.revenuePerView||0).toFixed(4)+"."):"No post insight available.";
+ document.getElementById("posts").innerHTML=(data.topPosts||[]).map(p=>'<div class="post"><div><b>'+escapeHtml(p.title)+'</b></div><span>'+fmt(p.views)+' views</span></div>').join("")||'<div class="muted">No posts yet.</div>';
+ document.getElementById("status").textContent=live?"MCP READY · LIVE API":"MCP READY · FIXTURE";
+}
+function escapeHtml(s){return String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[c]))}
+function draw(){const values=[32,38,35,45,49,44,57,61,58,69,73,71,78,82,76,88,91,86,95,100,97,108,111,118,116,124,131,127,139,146];document.getElementById("chart").innerHTML=values.map(v=>'<div class="bar" style="height:'+v*1.55+'px"></div>').join("")}
+async function loadPublication(){const name=document.getElementById("publication").value.trim();if(!name)return;document.getElementById("status").textContent="LOADING · API";try{const r=await fetch("/api/publication?publication="+encodeURIComponent(name));if(!r.ok)throw new Error("API "+r.status);render(await r.json(),true)}catch(e){document.getElementById("status").textContent="API ERROR · FIXTURE";document.getElementById("answer").textContent="Live API unavailable: "+e.message}}
+function ask(){const q=document.getElementById("q").value.trim();document.getElementById("answer").textContent=q?"Query staged for the publication analysis agent: “"+q+"”":"Ask something like “which posts drive paid conversion?”"}
+draw();render(fixture);
 </script></body></html>
